@@ -76,6 +76,7 @@
                 {dayjs(seance.dateHeure).format('HH[h]mm')} {seance.idSalle[0]}
               </span>
               <span class="cycle">{seance.cycle}</span>
+              <span>{seance.mention}</span>
 
               <ul>
                 {#each seance.items as item}
