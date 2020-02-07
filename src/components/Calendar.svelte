@@ -5,17 +5,11 @@
   dayjs.locale("fr");
   import "../lib/dayjs_custom_locale_fr.js";
   export let data = [];
-
-  console.log(window.location.hash);
-
-  // onMount(async () => {
-  // console.log(JSON.stringify(data, null, 2));
-  // });
 </script>
 
 <style>
   section {
-    background-color: #ccc;
+    background-color: #eee;
     margin: 0;
   }
 
@@ -34,9 +28,13 @@
     align-self: auto;
     width: 25%;
     margin: 1px;
-    /* background-color: #ccc; */
-    background: linear-gradient(to top, #ccc 0%, #eee 100%);
+    background-color: #ddd;
+    /* background: linear-gradient(to top, #ccc 0%, #eee 100%); */
   }
+
+  /* .col:not(:last-child) {
+    border-right: solid 2px #ccc;
+  } */
 
   a.seance {
     display: block;
@@ -59,6 +57,10 @@
     text-transform: uppercase;
     font-size: 0.875rem;
   }
+
+  .dateheure {
+    font-weight: 700;
+  }
 </style>
 
 <section>
@@ -69,8 +71,12 @@
         <div class="col">
           {#each col as seance}
             <a class="seance" href="javascript:void 0;">
-              {dayjs(seance.dateHeure).format('HH[h]mm')} {seance.idSalle[0]}
-              <div class="cycle">{seance.cycle}</div>
+
+              <span class="dateheure">
+                {dayjs(seance.dateHeure).format('HH[h]mm')} {seance.idSalle[0]}
+              </span>
+              <span class="cycle">{seance.cycle}</span>
+
               <ul>
                 {#each seance.items as item}
                   <li>

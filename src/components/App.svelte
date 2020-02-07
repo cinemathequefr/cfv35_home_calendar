@@ -8,39 +8,49 @@
   // import "../lib/dayjs_custom_locale_fr.js";
 
   let data = [];
-  let curDate = "2020-04-25";
-  // const curDate = "2020-03-09";
-  // const curDate = "2020-03-14";
+  let dayData = [];
+
+  let curDate = dayjs()
+    .startOf("day")
+    .format("YYYY-MM-DD");
+
+  $: dayData = _(data)
+    .groupBy(d => d.dateHeure.substring(0, 10))
+    .pick(curDate)
+    .values()
+    .flatten()
+    .map(d => {
+      return _({})
+        .assign(d, { slot: timeSlotFn(d.dateHeure.substring(11, 15)) })
+        .value();
+    })
+    // Fonction pour distribuer les séances dans un tableau à 3 cases selon la valeur de slot
+    .reduce(
+      (acc, v) => {
+        let i = _.indexOf(["07:00", "17:00", "20:00"], v.slot);
+        acc[i] = _.concat(acc[i], [v]);
+        return acc;
+      },
+      [[], [], []]
+    );
 
   const timeSlotFn = createTimeSlotFn(["07:00", "17:00", "20:00"]);
 
   onMount(async () => {
     const res = await fetch(
-      "https://raw.githubusercontent.com/cinemathequefr/Publications_cycles/master/data/PROG67%20Mars-mai%202020/PROG67%20Mars-mai%202020_CALENDAR.json"
+      "https://gist.githubusercontent.com/nltesown/28c230ed63550a77062a560d632f7e63/raw/calendar_65_67.json"
+      // "https://raw.githubusercontent.com/cinemathequefr/Publications_cycles/master/data/PROG67%20Mars-mai%202020/PROG67%20Mars-mai%202020_CALENDAR.json"
     );
 
     data = await res.json();
-
-    data = _(data)
-      .groupBy(d => d.dateHeure.substring(0, 10))
-      .pick(curDate)
-      .values()
-      .flatten()
-      .map(d => {
-        return _({})
-          .assign(d, { slot: timeSlotFn(d.dateHeure.substring(11, 15)) })
-          .value();
-      })
-      // Fonction pour distribuer les séances dans un tableau à 3 cases selon la valeur de slot
-      .reduce(
-        (acc, v) => {
-          let i = _.indexOf(["07:00", "17:00", "20:00"], v.slot);
-          acc[i] = _.concat(acc[i], [v]);
-          return acc;
-        },
-        [[], [], []]
-      );
   });
+
+  function changeDate(e) {
+    curDate = dayjs(curDate)
+      .startOf("day")
+      .add(e < 0 ? -1 : 1, "days")
+      .format("YYYY-MM-DD");
+  }
 
   /**
    * createTimeSlotFn
@@ -63,5 +73,38 @@
   }
 </script>
 
+<style>
+  .selector {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    display: inline-block;
+    background-color: #223;
+  }
+  input[type="date"] {
+    margin: 4px;
+    height: 38px;
+    padding: 6px 10px;
+    background-color: #fff;
+    border-radius: 0;
+    box-shadow: none;
+    box-sizing: border-box;
+  }
+</style>
+
 <Menu />
-<Calendar {data} />
+<Calendar data={dayData} />
+
+<div
+  class="selector"
+  on:DOMMouseScroll={e => {
+    changeDate(e.deltaY);
+    e.preventDefault();
+  }}
+  on:wheel={e => {
+    changeDate(e.deltaY);
+    e.preventDefault();
+  }}>
+  <input type="date" bind:value={curDate} />
+</div>
