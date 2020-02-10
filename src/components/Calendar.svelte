@@ -36,7 +36,7 @@
     width: 25%;
     margin: 1px;
     padding-top: 8px;
-    border-right: solid 2px #fff;
+    border-right: solid 3px #fff;
   }
 
   .col:last-child {
@@ -93,7 +93,8 @@
   li {
     margin: 2px 0;
     padding-left: 6px;
-    border-left: solid 4px #bfbfcc;
+    border-left: solid 3px transparent;
+    /* border-left: solid 3px #bfbfcc; */
   }
 
   .titre {
