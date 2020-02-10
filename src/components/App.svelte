@@ -94,7 +94,7 @@
 </style>
 
 <Menu />
-<Calendar data={dayData} />
+<Calendar data={dayData} {curDate} />
 
 <div
   class="selector"
